@@ -12,6 +12,9 @@
 
 </div>
 
+> [!NOTE]
+> This is [**MA0B**](https://github.com/MA0B)'s personal fork of [end-4/dots-hyprland](https://github.com/end-4/dots-hyprland) — full credit for the dotfiles themselves goes to **end-4** and everyone thanked in [• thank you •](#-thank-you-) below. This fork only adds a few personal tweaks on top, kept separate in [`personal-extras/`](../personal-extras/README.md) (Brazilian Portuguese keyboard layout + a `ç`/`Ç` fix that also works in Chromium/Electron apps). Everything else is unchanged from upstream.
+
 <div align="center">
     <h2>• overview •</h2>
     <h3></h3>
@@ -77,7 +80,7 @@
 </div>
 
 <div align="center">
-    <img src="assets/illogical-impulse.svg" alt="illogical-impulse logo" style="float:left; width:400;">
+    <img src="assets/illogical-impulse.svg" alt="illogical-impulse logo" style="float:left; width:400px;">
 </div>
 
 Widget system: Quickshell | Support: Yes
@@ -111,7 +114,6 @@ Widget system: Quickshell | Support: Yes
 - Tentacle cat hub twinkle internet points
 
 [![Stargazers over time](https://starchart.cc/end-4/dots-hyprland.svg?variant=adaptive)](https://starchart.cc/end-4/dots-hyprland)
-
 
 ---
 
@@ -175,4 +177,3 @@ Widget system: EWW | Support: No
 
  - Inspiration: osu!lazer (Hybrid), Windows 11 (Windoes), AvdanOS (NovelKnock), Material Design 3 (m3ww & later)
  - Copying: Absolutely, feel free. Just follow the license and it's all good
- 
