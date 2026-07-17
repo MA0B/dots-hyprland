@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Personal extras on top of dots-hyprland: fixes ç/Ç (Brazilian cedilla,
 # apostrophe convention) to work identically in every app, including
-# Chromium/Electron apps like Discord, which ignore ~/.XCompose.
+# Chromium/Electron apps like Discord, via fcitx5 as the system input method.
 #
 # Run this AFTER "./setup install" from the repo root.
 # This script uses sudo interactively — run it yourself, don't pipe a
@@ -9,31 +9,21 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-echo "==> Installing keyd"
-sudo pacman -S --needed keyd
+echo "==> Installing fcitx5"
+sudo pacman -S --needed fcitx5
 
-echo "==> Installing custom XKB layout (ccedilla direct mapping, bypasses app-side compose)"
-sudo install -Dm644 xkb-symbols-brintl /usr/share/X11/xkb/symbols/brintl
-
-echo "==> Installing keyd config (hold ' >=100ms + c => ç, + Shift+c => Ç)"
-sudo install -Dm644 keyd-default.conf /etc/keyd/default.conf
-
-echo "==> Enabling keyd"
-sudo systemctl enable --now keyd
-sudo systemctl restart keyd
-
-echo "==> Installing ~/.XCompose (fallback for GTK/Qt apps that do read Compose files)"
+echo "==> Installing ~/.XCompose (dead_acute + c/C => ç/Ç directly)"
 install -m644 XCompose "$HOME/.XCompose"
 
-echo "==> Reloading Hyprland (requires ~/.config/hypr/custom/general.lua from this repo,"
-echo "    copied there by './setup install' — kb_layout=brintl kb_variant=basic)"
-if command -v hyprctl &>/dev/null && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
-  hyprctl reload
-else
-  echo "    (not running inside Hyprland right now, skipping reload)"
-fi
-
 echo
-echo "Done. Test: hold ' (~100ms) and tap c => should type 'ç'. Quick/rollover ' + vowel => normal accent, no misfire."
-echo "Note: after a fresh install, log out/in once so the systemd --user session"
-echo "picks up a clean environment (no stray GTK_IM_MODULE/QT_IM_MODULE overrides)."
+echo "Done. fcitx5 is started by ~/.config/hypr/custom/execs.lua (installed"
+echo "normally by './setup install') and GTK_IM_MODULE/QT_IM_MODULE/XMODIFIERS"
+echo "are set to fcitx by ~/.config/hypr/custom/env.lua (same install step)."
+echo
+echo "Log out/in once so the systemd --user session picks up those env vars."
+echo "The default input method (keyboard-us-intl) is configured via"
+echo "~/.config/fcitx5/profile, created interactively the first time fcitx5"
+echo "runs (fcitx5-configtool) — set Layout=us, Default Input Method=keyboard-us-intl"
+echo "if it doesn't pick that automatically."
+echo
+echo "Test: ' + c => ç, ' + C => Ç, in every app including Discord/Chromium."

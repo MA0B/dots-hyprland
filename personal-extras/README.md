@@ -1,32 +1,39 @@
 # Personal extras (Mauricio)
 
 Additions on top of upstream dots-hyprland that don't fit in `~/.config`
-(they touch `/etc` and `/usr/share`, which the main installer doesn't manage):
+(this one touches `$HOME` directly, outside anything the main installer
+manages):
 
-- **keyd-default.conf** → `/etc/keyd/default.conf`
-- **xkb-symbols-brintl** → `/usr/share/X11/xkb/symbols/brintl`
 - **XCompose** → `~/.XCompose`
 
-Together these make `ç`/`Ç` (hold `'` for ~100ms + `c`/`Shift+c`) work
-identically in every app, including Chromium/Electron apps (Discord, etc.)
-which ignore `~/.XCompose`. Normal accents (á é í ó ú ã õ ñ — quick tap of
-`'`) already work everywhere via plain Hyprland/XKB
-(`kb_layout=brintl kb_variant=basic`, set in
-`../dots/.config/hypr/custom/general.lua`, installed normally by
-`./setup install`).
+This makes `ç`/`Ç` (`'` + `c`/`Shift+c`, no hold needed) work identically
+in every app, including Chromium/Electron apps (Discord, etc.), via
+**fcitx5** as the system input method — Electron only honors IME
+composition through ibus/fcitx, never a plain `~/.XCompose` file read
+directly by the toolkit, which is why fcitx5 is in the loop at all instead
+of just shipping a Compose file.
 
-`'` is bound to `overloadt2(cedil, apostrophe, 100)` in keyd: it only
-commits to the cedilla layer if held for >=100ms, so fast/rollover typing
-(where the next key is struck slightly before `'` is released) still
-resolves as a normal apostrophe/dead-key instead of misfiring into the
-cedilla layer. Adjust the `100` in `keyd-default.conf` if that threshold
-ever feels off.
+The rest of the wiring lives in the normal dots-hyprland tree, installed by
+`./setup install` from the repo root:
+
+- `../dots/.config/hypr/custom/general.lua` — `kb_layout=us kb_variant=intl`
+  (normal accents: á é í ó ú ã õ ñ, quick tap of `'`)
+- `../dots/.config/hypr/custom/execs.lua` — starts `fcitx5 -d` on Hyprland
+  startup
+- `../dots/.config/hypr/custom/env.lua` — sets `GTK_IM_MODULE`,
+  `QT_IM_MODULE`, `XMODIFIERS` to `fcitx`, and `XCOMPOSEFILE` to
+  `~/.XCompose`
+
+fcitx5's own input-method selection (which layout/engine it uses,
+`keyboard-us-intl`) lives in `~/.config/fcitx5/profile`, not tracked here —
+it's regenerated interactively via `fcitx5-configtool` on first run.
 
 ## Fresh install on a new machine
 
 ```bash
 ./setup install              # from the repo root — installs dots-hyprland itself
-./personal-extras/install-extras.sh   # this folder — installs keyd + XKB + XCompose
+./personal-extras/install-extras.sh   # this folder — installs fcitx5 + XCompose
 ```
 
-Then log out/in once.
+Then log out/in once, and run `fcitx5-configtool` to set Layout=us /
+Default Input Method=keyboard-us-intl if it isn't picked up automatically.
