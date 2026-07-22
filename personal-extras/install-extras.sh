@@ -15,10 +15,13 @@ sudo pacman -S --needed fcitx5
 echo "==> Installing ~/.XCompose (dead_acute + c/C => ç/Ç directly)"
 install -m644 XCompose "$HOME/.XCompose"
 
+echo "==> Installing LG 27GN750 ICC profile (used by the SDR mode of the HDR toggle)"
+install -Dm644 icc/27GN7.icm "$HOME/.local/share/icc/27GN7.icm"
+
 echo
 echo "Done. fcitx5 is started by ~/.config/hypr/custom/execs.lua (installed"
-echo "normally by './setup install') and GTK_IM_MODULE/QT_IM_MODULE/XMODIFIERS"
-echo "are set to fcitx by ~/.config/hypr/custom/env.lua (same install step)."
+echo "normally by './setup install') and QT_IM_MODULE/XMODIFIERS are set to"
+echo "fcitx by ~/.config/hypr/custom/env.lua (same install step)."
 echo
 echo "Log out/in once so the systemd --user session picks up those env vars."
 echo "The default input method (keyboard-us-intl) is configured via"

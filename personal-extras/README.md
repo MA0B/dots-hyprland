@@ -5,6 +5,9 @@ Additions on top of upstream dots-hyprland that don't fit in `~/.config`
 manages):
 
 - **XCompose** → `~/.XCompose`
+- **icc/27GN7.icm** → `~/.local/share/icc/27GN7.icm` — LG's official ICC
+  profile for the 27GN750 monitor; `dots/.config/hypr/custom/general.lua`
+  points at it in SDR mode (the HDR/SDR toggle on `SUPER+SHIFT+H`)
 
 This makes `ç`/`Ç` (`'` + `c`/`Shift+c`, no hold needed) work identically
 in every app, including Chromium/Electron apps (Discord, etc.), via
@@ -20,9 +23,10 @@ The rest of the wiring lives in the normal dots-hyprland tree, installed by
   (normal accents: á é í ó ú ã õ ñ, quick tap of `'`)
 - `../dots/.config/hypr/custom/execs.lua` — starts `fcitx5 -d` on Hyprland
   startup
-- `../dots/.config/hypr/custom/env.lua` — sets `GTK_IM_MODULE`,
-  `QT_IM_MODULE`, `XMODIFIERS` to `fcitx`, and `XCOMPOSEFILE` to
-  `~/.XCompose`
+- `../dots/.config/hypr/custom/env.lua` — sets `QT_IM_MODULE` and
+  `XMODIFIERS` to `fcitx`, and `XCOMPOSEFILE` to `~/.XCompose`
+  (`GTK_IM_MODULE` is no longer set — on Wayland, GTK talks to fcitx5 via
+  the text-input protocol without it)
 
 fcitx5's own input-method selection (which layout/engine it uses,
 `keyboard-us-intl`) lives in `~/.config/fcitx5/profile`, not tracked here —
