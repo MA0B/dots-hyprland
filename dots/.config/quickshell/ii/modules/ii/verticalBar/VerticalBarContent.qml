@@ -149,7 +149,27 @@ Item { // Bar content region
                 Layout.fillWidth: true
                 Layout.fillHeight: false
             }
-            
+
+            HorizontalBarSeparator {
+                visible: controllerBattery.available
+            }
+
+            ControllerBattery {
+                id: controllerBattery
+                Layout.fillWidth: true
+                Layout.fillHeight: false
+            }
+
+            HorizontalBarSeparator {
+                visible: budsBattery.available
+            }
+
+            BudsBattery {
+                id: budsBattery
+                Layout.fillWidth: true
+                Layout.fillHeight: false
+            }
+
         }
     }
 

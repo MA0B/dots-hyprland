@@ -183,6 +183,16 @@ Item { // Bar content region
                     visible: (root.useShortenedForm < 2 && Battery.available)
                     Layout.alignment: Qt.AlignVCenter
                 }
+
+                ControllerBattery {
+                    visible: (root.useShortenedForm < 2)
+                    Layout.alignment: Qt.AlignVCenter
+                }
+
+                BudsBattery {
+                    visible: (root.useShortenedForm < 2)
+                    Layout.alignment: Qt.AlignVCenter
+                }
             }
         }
     }
