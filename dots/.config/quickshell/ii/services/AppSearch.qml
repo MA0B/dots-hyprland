@@ -49,7 +49,7 @@ Singleton {
     )
     
     readonly property var preppedNames: list.map(a => ({
-        name: Fuzzy.prepare(`${a.name} `),
+        name: Fuzzy.prepare(`${a.name} ${a.id} `),
         entry: a
     }))
 
@@ -62,7 +62,7 @@ Singleton {
         if (root.sloppySearch) {
             const results = list.map(obj => ({
                 entry: obj,
-                score: Levendist.computeScore(obj.name.toLowerCase(), search.toLowerCase())
+                score: Math.max(Levendist.computeScore((obj.name || "").toLowerCase(), search.toLowerCase()), Levendist.computeScore((obj.id || "").toLowerCase(), search.toLowerCase()))
             })).filter(item => item.score > root.scoreThreshold)
                 .sort((a, b) => b.score - a.score)
             return results

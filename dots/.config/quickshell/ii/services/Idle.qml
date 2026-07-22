@@ -3,6 +3,7 @@ import qs.modules.common
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Io
 
 /**
  * A nice wrapper for date and time strings.
@@ -12,6 +13,15 @@ Singleton {
 
     property alias inhibit: idleInhibitor.enabled
     inhibit: false
+
+    Process {
+        id: fileProcess
+    }
+
+    onInhibitChanged: {
+        fileProcess.command = ["bash", "-c", inhibit ? "touch /tmp/qs_inhibit" : "rm -f /tmp/qs_inhibit"]
+        fileProcess.running = true
+    }
 
     Connections {
         target: Persistent
