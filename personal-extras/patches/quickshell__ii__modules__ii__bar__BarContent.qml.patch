@@ -1,0 +1,21 @@
+diff --git a/quickshell/ii/modules/ii/bar/BarContent.qml b/quickshell/ii/modules/ii/bar/BarContent.qml
+index 3bec7589..f8689aa3 100644
+--- a/quickshell/ii/modules/ii/bar/BarContent.qml
++++ b/quickshell/ii/modules/ii/bar/BarContent.qml
+@@ -183,6 +183,16 @@ Item { // Bar content region
+                     visible: (root.useShortenedForm < 2 && Battery.available)
+                     Layout.alignment: Qt.AlignVCenter
+                 }
++
++                ControllerBattery {
++                    visible: (root.useShortenedForm < 2)
++                    Layout.alignment: Qt.AlignVCenter
++                }
++
++                BudsBattery {
++                    visible: (root.useShortenedForm < 2)
++                    Layout.alignment: Qt.AlignVCenter
++                }
+             }
+         }
+     }

@@ -1,0 +1,28 @@
+diff --git a/quickshell/ii/services/Idle.qml b/quickshell/ii/services/Idle.qml
+index a2b80477..db538fbf 100644
+--- a/quickshell/ii/services/Idle.qml
++++ b/quickshell/ii/services/Idle.qml
+@@ -3,6 +3,7 @@ import qs.modules.common
+ import QtQuick
+ import Quickshell
+ import Quickshell.Wayland
++import Quickshell.Io
+ 
+ /**
+  * A nice wrapper for date and time strings.
+@@ -13,6 +14,15 @@ Singleton {
+     property alias inhibit: idleInhibitor.enabled
+     inhibit: false
+ 
++    Process {
++        id: fileProcess
++    }
++
++    onInhibitChanged: {
++        fileProcess.command = ["bash", "-c", inhibit ? "touch /tmp/qs_inhibit" : "rm -f /tmp/qs_inhibit"]
++        fileProcess.running = true
++    }
++
+     Connections {
+         target: Persistent
+         function onReadyChanged() {
