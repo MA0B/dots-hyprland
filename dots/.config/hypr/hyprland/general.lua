@@ -301,5 +301,9 @@ hl.config({
 
     xwayland = {
         force_zero_scaling = true
+    },
+    
+    render = {
+        direct_scanout = true
     }
 })
