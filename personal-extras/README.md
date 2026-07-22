@@ -43,18 +43,17 @@ restore them.
    - `/etc/mkinitcpio.conf`: `MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)`
    - kernel cmdline: `nvidia_drm.modeset=1 nvidia_drm.fbdev=1 zswap.enabled=0`
    - then `mkinitcpio -P` and regenerate the bootloader entry.
-3. **Clone + dots**:
+3. **Clone + install everything**:
    ```bash
    git clone https://github.com/MA0B/dots-hyprland.git   # https first; ssh needs gh auth
    cd dots-hyprland
    ./setup install
    ```
-4. **System + packages + extras**:
-   ```bash
-   ./personal-extras/restore-system.sh   # packages, /etc, services, $HOME units
-   ./personal-extras/install-extras.sh   # fcitx5 + XCompose + monitor ICC
-   ```
-5. **Reboot.** tty1 autologs in and starts Hyprland directly.
+   This fork's `setup install` chains `restore-system.sh` (packages, /etc,
+   services, `$HOME` units) and `install-extras.sh` (fcitx5 + XCompose +
+   monitor ICC) as its final step — `SKIP_PERSONALEXTRAS=true ./setup install`
+   for upstream behavior only; both scripts also run standalone.
+4. **Reboot.** tty1 autologs in and starts Hyprland directly.
 
 ### Manual afterwards (not restorable from a public repo)
 

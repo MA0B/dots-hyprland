@@ -87,6 +87,14 @@ case ${SUBCMD_NAME} in
     if [[ "${SKIP_ALLFILES}" != true ]]; then
       source ${SUBCMD_DIR}/3.files.sh
     fi
+    # 4. Personal extras (this fork): system restore + input method/ICC.
+    # Skip with SKIP_PERSONALEXTRAS=true. Both scripts are idempotent.
+    if [[ "${SKIP_PERSONALEXTRAS}" != true ]]; then
+      printf "${STY_CYAN}[personal-extras] Restoring system state (packages, /etc, services)...${STY_RST}\n"
+      ./personal-extras/restore-system.sh
+      printf "${STY_CYAN}[personal-extras] Installing fcitx5 + XCompose + monitor ICC...${STY_RST}\n"
+      ./personal-extras/install-extras.sh
+    fi
     ;;
   install-deps)
     for function in ${print_os_group_id_functions[@]}; do

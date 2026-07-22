@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Restore system-level state on a fresh Arch install (the inverse of
-# capture-system.sh). Run AFTER "./setup install" from the repo root, as the
-# normal user. Uses sudo interactively — run it yourself, don't pipe a
-# password into it. Idempotent: safe to re-run.
+# capture-system.sh). "./setup install" from the repo root runs this
+# automatically as its final step; it can also be run standalone afterwards.
+# Uses sudo interactively — run it yourself, don't pipe a password into it.
+# Idempotent: safe to re-run.
 #
 # Assumes: same username (morrice — getty autologin and .bash_profile hardcode
 # it), Arch with systemd. See README.md for the manual steps this does NOT
@@ -52,5 +53,5 @@ systemctl --user daemon-reload
 systemctl --user enable g733-leds-off.timer ydotool.service
 
 echo
-echo "Done. Now run ./install-extras.sh (fcitx5 + XCompose + monitor ICC),"
-echo "check the manual steps in README.md, and reboot."
+echo "Done. (When run via './setup install', install-extras.sh comes next"
+echo "automatically.) Check the manual steps in README.md, then reboot."

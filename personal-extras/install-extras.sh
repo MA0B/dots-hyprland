@@ -3,7 +3,8 @@
 # apostrophe convention) to work identically in every app, including
 # Chromium/Electron apps like Discord, via fcitx5 as the system input method.
 #
-# Run this AFTER "./setup install" from the repo root.
+# "./setup install" from the repo root runs this automatically (after
+# restore-system.sh); it can also be run standalone.
 # This script uses sudo interactively — run it yourself, don't pipe a
 # password into it.
 set -euo pipefail
