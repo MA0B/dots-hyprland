@@ -1,43 +1,81 @@
 # Personal extras (Mauricio)
 
-Additions on top of upstream dots-hyprland that don't fit in `~/.config`
-(this one touches `$HOME` directly, outside anything the main installer
-manages):
+Everything on top of upstream dots-hyprland needed to rebuild the whole
+machine from a minimal Arch install: system-level `/etc` files, `$HOME`
+files outside `~/.config`, package lists, and the scripts that capture and
+restore them.
 
-- **XCompose** → `~/.XCompose`
-- **icc/27GN7.icm** → `~/.local/share/icc/27GN7.icm` — LG's official ICC
-  profile for the 27GN750 monitor; `dots/.config/hypr/custom/general.lua`
-  points at it in SDR mode (the HDR/SDR toggle on `SUPER+SHIFT+H`)
+## Layout
 
-This makes `ç`/`Ç` (`'` + `c`/`Shift+c`, no hold needed) work identically
-in every app, including Chromium/Electron apps (Discord, etc.), via
-**fcitx5** as the system input method — Electron only honors IME
-composition through ibus/fcitx, never a plain `~/.XCompose` file read
-directly by the toolkit, which is why fcitx5 is in the loop at all instead
-of just shipping a Compose file.
+- `system/etc/` — snapshot of the customized `/etc` files, mirrored by path:
+  NVIDIA vars in `environment`, Wake-on-LAN (`systemd/network/50-wol.link` +
+  `20-wired.network`, network is **systemd-networkd + iwd + resolved**, not
+  NetworkManager), zram (`systemd/zram-generator.conf`), reflector config
+  (Brazil mirrors), `modprobe.d/btusb-no-autosuspend.conf` (Intel 9260 BT),
+  and getty autologin on tty1 (pairs with `home/.bash_profile`, which execs
+  `start-hyprland` — no display manager).
+- `home/` — `$HOME` files the main installer doesn't manage: `.bash_profile`
+  (autologin exec), G733 LED-off user units, fcitx5 profile
+  (`keyboard-us-intl` preselected).
+- `packages/` — `pacman.txt` (explicit official), `aur.txt` (foreign,
+  includes the `illogical-impulse-*` set), `flatpak.txt` (user remote).
+- `XCompose` → `~/.XCompose` — `'` + `c`/`C` ⇒ `ç`/`Ç` in every app,
+  including Chromium/Electron, via **fcitx5** (Electron only honors IME
+  composition through ibus/fcitx, never a plain Compose file; that's why
+  fcitx5 is in the loop at all). `dots/.config/hypr/custom/env.lua` sets
+  `QT_IM_MODULE`/`XMODIFIERS` (`GTK_IM_MODULE` intentionally absent — GTK
+  reaches fcitx5 via the Wayland text-input protocol), and
+  `custom/execs.lua` starts `fcitx5 -d`.
+- `icc/27GN7.icm` → `~/.local/share/icc/` — LG's official ICC profile for
+  the 27GN750; the SDR side of the HDR toggle (`SUPER+SHIFT+H`) points at it.
+- `capture-system.sh` — re-snapshot the live machine into this folder
+  (run before committing when system state changed).
+- `restore-system.sh` — apply all of the above on a fresh install.
+- `install-extras.sh` — fcitx5 + XCompose + ICC (the `$HOME`-only bits).
 
-The rest of the wiring lives in the normal dots-hyprland tree, installed by
-`./setup install` from the repo root:
+## Fresh machine walkthrough
 
-- `../dots/.config/hypr/custom/general.lua` — `kb_layout=us kb_variant=intl`
-  (normal accents: á é í ó ú ã õ ñ, quick tap of `'`)
-- `../dots/.config/hypr/custom/execs.lua` — starts `fcitx5 -d` on Hyprland
-  startup
-- `../dots/.config/hypr/custom/env.lua` — sets `QT_IM_MODULE` and
-  `XMODIFIERS` to `fcitx`, and `XCOMPOSEFILE` to `~/.XCompose`
-  (`GTK_IM_MODULE` is no longer set — on Wayland, GTK talks to fcitx5 via
-  the text-input protocol without it)
+1. **Base install** (archinstall or manual): Arch, btrfs on LVM with
+   subvolumes `@ @home @pkg @log`, mount options
+   `noatime,compress=zstd:3,ssd,discard=async`. Create the user **morrice**
+   (getty autologin and `.bash_profile` hardcode it).
+2. **NVIDIA (manual, machine-specific)** — current desktop (RTX 3060 Ti):
+   - `/etc/mkinitcpio.conf`: `MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)`
+   - kernel cmdline: `nvidia_drm.modeset=1 nvidia_drm.fbdev=1 zswap.enabled=0`
+   - then `mkinitcpio -P` and regenerate the bootloader entry.
+3. **Clone + dots**:
+   ```bash
+   git clone https://github.com/MA0B/dots-hyprland.git   # https first; ssh needs gh auth
+   cd dots-hyprland
+   ./setup install
+   ```
+4. **System + packages + extras**:
+   ```bash
+   ./personal-extras/restore-system.sh   # packages, /etc, services, $HOME units
+   ./personal-extras/install-extras.sh   # fcitx5 + XCompose + monitor ICC
+   ```
+5. **Reboot.** tty1 autologs in and starts Hyprland directly.
 
-fcitx5's own input-method selection (which layout/engine it uses,
-`keyboard-us-intl`) lives in `~/.config/fcitx5/profile`, not tracked here —
-it's regenerated interactively via `fcitx5-configtool` on first run.
+### Manual afterwards (not restorable from a public repo)
 
-## Fresh install on a new machine
+- `gh auth login` (then `gh auth setup-git` — remotes use ssh), Chrome
+  profile/sync, Steam login, keyring password.
+- Wi-Fi: `iwctl station <dev> connect <ssid>` (desktop uses ethernet).
+- Extra disks: recreate `/mnt/ssd` + `/mnt/hdd` fstab lines with the disks'
+  UUIDs (btrfs, `noatime,compress=zstd:3,nofail`; SSD also
+  `ssd,discard=async`). Reference from the current machine:
+  `e88494f3-…` → `/mnt/ssd` (Steam library), `e9f31eeb-…` → `/mnt/hdd`.
+- New NIC? Edit `MACAddress=` in `system/etc/systemd/network/50-wol.link`
+  before (or after) restoring, and check BIOS: "Power On By PCI-E" on,
+  ErP off.
+- BlueZ battery for the Galaxy Buds is handled by `restore-system.sh`
+  (`Experimental = true`); just re-pair the earbuds and controllers.
+- Proton-GE: via ProtonUp-Qt (installed from `flatpak.txt`).
+- fcitx5: profile ships preconfigured; if input is off, check
+  `fcitx5-configtool` (Layout=us, Default IM=keyboard-us-intl).
 
-```bash
-./setup install              # from the repo root — installs dots-hyprland itself
-./personal-extras/install-extras.sh   # this folder — installs fcitx5 + XCompose
-```
+## Keeping it in sync
 
-Then log out/in once, and run `fcitx5-configtool` to set Layout=us /
-Default Input Method=keyboard-us-intl if it isn't picked up automatically.
+When live state changes: `./capture-system.sh`, review `git diff`, commit.
+The `dots/.config` tree is synced separately by copying changed live files
+in by hand (same as always — see repo history for the pattern).

@@ -1,0 +1,10 @@
+# Wake-on-LAN (magic packet) para a Realtek onboard (enp6s0)
+# Instalado em /etc/systemd/network/50-wol.link
+[Match]
+MACAddress=24:4b:fe:9a:2e:52
+
+[Link]
+NamePolicy=keep kernel database onboard slot path
+AlternativeNamesPolicy=database onboard slot path mac
+MACAddressPolicy=persistent
+WakeOnLan=magic

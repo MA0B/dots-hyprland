@@ -1,0 +1,7 @@
+[Unit]
+Description=Desliga as LEDs do Logitech G733
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/headsetcontrol -l 0
+SuccessExitStatus=0 1

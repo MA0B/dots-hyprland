@@ -1,0 +1,10 @@
+[Unit]
+Description=Reaplica LEDs desligadas do G733 (cobre religar o headset)
+
+[Timer]
+OnStartupSec=30s
+OnUnitActiveSec=30s
+AccuracySec=5s
+
+[Install]
+WantedBy=timers.target
