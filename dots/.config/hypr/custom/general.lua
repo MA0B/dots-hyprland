@@ -40,5 +40,8 @@ hl.config({
     },
     misc = {
         vrr = 2, -- FreeSync/VRR apenas em janelas fullscreen (jogos)
+    },
+    render = {
+        direct_scanout = false,
     }
 })
